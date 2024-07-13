@@ -1,0 +1,71 @@
+{% extends "clients/base.html" %}
+{% load custom_filters %}
+{% load static %}
+
+{% block title %}Client List{% endblock %}
+
+{% block content %}
+
+<!-- Custom logo with inline CSS -->
+<img src="https://scontent.febl2-1.fna.fbcdn.net/v/t39.30808-6/243328536_228746125938252_1789530746837291869_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=Lra832WxYZwQ7kNvgGeaDTp&_nc_ht=scontent.febl2-1.fna&oh=00_AYDbWjn_XoB94vet-KlGP2frz9fklYNp0lHR_Cathqvv9w&oe=668AF366" alt="Your Logo" style="position: absolute; top: 20px; right: 20px; width: 100px; height: auto; border-radius: 50%;">
+
+<div class="container mt-5">
+    <h1 class="mb-4">Client List</h1>
+    <div class="mb-3">
+        <a href="{% url 'client_create' %}" class="btn btn-success">Add New Client</a>
+        <a href="{% url 'generate_pdf' %}" class="btn btn-secondary">Print to PDF</a>
+    </div>
+
+    {% for date, clients in grouped_clients.items %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>{{ date }}</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Service Type</th>
+                            <th>Service Date</th>
+                            <th>Fees</th>
+                            <th>Currency</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                            <tr>
+                                <td>{{ client.name }}</td>
+                                <td>{{ client.phone }}</td>
+                                <td>{{ client.email }}</td>
+                                <td>{{ client.service_type }}</td>
+                                <td>{{ client.service_date }}</td>
+                                <td>{{ client.paid_fees }}</td>
+                                <td>{{ client.currency }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'client_detail' client.pk %}" class="btn btn-outline-info btn-sm">View</a>
+                                        <a href="{% url 'client_update' client.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                        <a href="{% url 'client_delete' client.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <tr>
+                    <td colspan="5" class="text-right"><strong>Total Income (IQD):</strong></td>
+                    <td colspan="3">{{ total_income_per_day_iqd|get_item:date }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-right"><strong>Total Income (USD):</strong></td>
+                    <td colspan="3">{{ total_income_per_day_usd|get_item:date }}</td>
+                </tr>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
